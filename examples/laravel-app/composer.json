@@ -1,0 +1,16 @@
+{
+    "name": "vedatrace/example-laravel",
+    "description": "Minimal Laravel integration example for VedaTrace SDK",
+    "type": "project",
+    "require": {
+        "laravel/framework": "^10.0|^11.0",
+        "vedatrace/vedatrace-php": "*"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../"
+        }
+    ],
+    "minimum-stability": "dev"
+}
