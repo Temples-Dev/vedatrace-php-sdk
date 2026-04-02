@@ -6,42 +6,72 @@ return [
     | VedaTrace API Key
     |--------------------------------------------------------------------------
     |
-    | Get your API Key from your VedaTrace dashboard.
+    | Get your API key from the VedaTrace dashboard.
     |
     */
-    'apiKey' => env('VEDATRACE_API_KEY', ''),
+    'apiKey' => env('VEDATRACE_API_KEY'),
 
     /*
     |--------------------------------------------------------------------------
-    | Service Name
+    | Default Service Name
     |--------------------------------------------------------------------------
     |
-    | Identifying name for your application.
+    | This name will be attached to every log unless overridden.
     |
     */
-    'service' => env('VEDATRACE_SERVICE', config('app.name', 'laravel-app')),
+    'service' => env('VEDATRACE_SERVICE', env('APP_NAME', 'laravel-app')),
 
     /*
     |--------------------------------------------------------------------------
-    | Batching and Performance
+    | Environment
     |--------------------------------------------------------------------------
     |
-    | How many logs should be buffered before sending them in a single batch.
+    | Define the environment where the logs are coming from.
     |
     */
-    'batchSize' => env('VEDATRACE_BATCH_SIZE', 5),
+    'environment' => env('VEDATRACE_ENV', env('APP_ENV', 'production')),
 
     /*
     |--------------------------------------------------------------------------
-    | Protected Fields (Redaction)
+    | Batching Options
     |--------------------------------------------------------------------------
     |
-    | JSON paths that will be automatically masked in log context.
+    | Configure how logs are batched before being sent to the server.
     |
     */
-    'redactPaths' => [
-        'password',
-        'token',
-        'credit_card.number'
+    'batchSize' => (int) env('VEDATRACE_BATCH_SIZE', 100),
+    'flushInterval' => (int) env('VEDATRACE_FLUSH_INTERVAL', 5000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redaction
+    |--------------------------------------------------------------------------
+    |
+    | Automatically redact sensitive information from logs.
+    |
+    */
+    'redaction' => [
+        'paths' => [
+            'password',
+            'password_confirmation',
+            'token',
+            'secret',
+            'authorization',
+            'cookie',
+            'php_auth_pw',
+            'surrogate_key',
+            'key',
+        ],
+        'mask' => '[REDACTED]',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Endpoint
+    |--------------------------------------------------------------------------
+    |
+    | The VedaTrace ingestion endpoint.
+    |
+    */
+    'endpoint' => env('VEDATRACE_ENDPOINT', 'https://ingest.vedatrace.dev/v1/logs'),
 ];
