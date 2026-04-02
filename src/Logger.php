@@ -50,6 +50,16 @@ class Logger extends AbstractLogger
         );
     }
 
+    public function warn($message, array $context = []): void
+    {
+        $this->warning($message, $context);
+    }
+
+    public function fatal($message, array $context = []): void
+    {
+        $this->log('fatal', $message, $context);
+    }
+
     public function flush(): void
     {
         if (empty($this->buffer)) {

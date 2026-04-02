@@ -20,14 +20,14 @@ class Config
 
     public function __construct(array $options = [])
     {
-        $this->apiKey = $options['apiKey'] ?? '';
-        $this->service = $options['service'] ?? 'default-php-service';
-        $this->endpoint = $options['endpoint'] ?? 'https://ingest.vedatrace.dev/v1/logs';
-        $this->environment = $options['environment'] ?? 'production';
-        $this->batchSize = $options['batchSize'] ?? 100;
-        $this->flushInterval = $options['flushInterval'] ?? 5000;
-        $this->maxRetries = $options['maxRetries'] ?? 3;
-        $this->retryDelay = $options['retryDelay'] ?? 1000;
+        $this->apiKey = $options['apiKey'] ?? getenv('VEDATRACE_API_KEY') ?: '';
+        $this->service = $options['service'] ?? getenv('VEDATRACE_SERVICE') ?: 'default-php-service';
+        $this->endpoint = $options['endpoint'] ?? getenv('VEDATRACE_ENDPOINT') ?: 'https://ingest.vedatrace.dev/v1/logs';
+        $this->environment = $options['environment'] ?? getenv('VEDATRACE_ENVIRONMENT') ?: 'production';
+        $this->batchSize = $options['batchSize'] ?? getenv('VEDATRACE_BATCH_SIZE') ?: 100;
+        $this->flushInterval = $options['flushInterval'] ?? getenv('VEDATRACE_FLUSH_INTERVAL') ?: 5000;
+        $this->maxRetries = $options['maxRetries'] ?? getenv('VEDATRACE_MAX_RETRIES') ?: 3;
+        $this->retryDelay = $options['retryDelay'] ?? getenv('VEDATRACE_RETRY_DELAY') ?: 1000;
         $this->redaction = $options['redaction'] ?? [
             'paths' => ['password', 'token', 'secret', 'authorization'],
             'mask' => '[REDACTED]'

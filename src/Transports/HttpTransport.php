@@ -25,7 +25,7 @@ class HttpTransport implements TransportInterface
         $this->client = new Client([
             'timeout' => 5.0,
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
+                'x-api-key' => $this->apiKey,
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'vedatrace-php/1.0.0'
             ]
@@ -40,10 +40,7 @@ class HttpTransport implements TransportInterface
 
         try {
             $response = $this->client->post($this->endpoint, [
-                'json' => [
-                    'logs' => $logs,
-                    'sentAt' => date('c')
-                ]
+                'json' => $logs
             ]);
 
             if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
