@@ -20,14 +20,14 @@ class Config
 
     public function __construct(array $options = [])
     {
-        $this->apiKey = $options['apiKey'] ?? getenv('VEDATRACE_API_KEY') ?: '';
-        $this->service = $options['service'] ?? getenv('VEDATRACE_SERVICE') ?: 'default-php-service';
-        $this->endpoint = $options['endpoint'] ?? getenv('VEDATRACE_ENDPOINT') ?: 'https://ingest.vedatrace.dev/v1/logs';
-        $this->environment = $options['environment'] ?? getenv('VEDATRACE_ENVIRONMENT') ?: 'production';
-        $this->batchSize = $options['batchSize'] ?? getenv('VEDATRACE_BATCH_SIZE') ?: 100;
-        $this->flushInterval = $options['flushInterval'] ?? getenv('VEDATRACE_FLUSH_INTERVAL') ?: 5000;
-        $this->maxRetries = $options['maxRetries'] ?? getenv('VEDATRACE_MAX_RETRIES') ?: 3;
-        $this->retryDelay = $options['retryDelay'] ?? getenv('VEDATRACE_RETRY_DELAY') ?: 1000;
+        $this->apiKey = $options['apiKey'] ?? $this->getEnvVar('VEDATRACE_API_KEY') ?: '';
+        $this->service = $options['service'] ?? $this->getEnvVar('VEDATRACE_SERVICE') ?: 'default-php-service';
+        $this->endpoint = $options['endpoint'] ?? $this->getEnvVar('VEDATRACE_ENDPOINT') ?: 'https://ingest.vedatrace.dev/v1/logs';
+        $this->environment = $options['environment'] ?? $this->getEnvVar('VEDATRACE_ENVIRONMENT') ?: 'production';
+        $this->batchSize = $options['batchSize'] ?? (int) $this->getEnvVar('VEDATRACE_BATCH_SIZE') ?: 100;
+        $this->flushInterval = $options['flushInterval'] ?? (int) $this->getEnvVar('VEDATRACE_FLUSH_INTERVAL') ?: 5000;
+        $this->maxRetries = $options['maxRetries'] ?? (int) $this->getEnvVar('VEDATRACE_MAX_RETRIES') ?: 3;
+        $this->retryDelay = $options['retryDelay'] ?? (int) $this->getEnvVar('VEDATRACE_RETRY_DELAY') ?: 1000;
         $this->redaction = $options['redaction'] ?? [
             'paths' => ['password', 'token', 'secret', 'authorization'],
             'mask' => '[REDACTED]'
@@ -42,5 +42,16 @@ class Config
             // apiKey is required for HTTP transport, but might not be for console
             // We'll leave validation to the transport or the main VedaTrace factory
         }
+    }
+
+    private function getEnvVar(string $name)
+    {
+        if (isset($_ENV[$name])) {
+            return $_ENV[$name];
+        }
+        if (isset($_SERVER[$name])) {
+            return $_SERVER[$name];
+        }
+        return getenv($name) !== false ? getenv($name) : null;
     }
 }

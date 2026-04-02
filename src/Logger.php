@@ -86,24 +86,37 @@ class Logger extends AbstractLogger
 
     private function formatLog($level, string $message, array $context): array
     {
-        $log = array_merge(
-            $this->defaultMetadata,
-            $context,
-            [
-                'level' => $level,
-                'message' => $this->interpolate($message, $context),
-                'timestamp' => date('c'),
-                'service' => $context['service'] ?? $this->config->service,
-                'environment' => $this->config->environment,
-            ]
-        );
+        // Normalize PSR-3 levels to VedaTrace expected levels
+        $levelMap = [
+            'warning' => 'warn',
+            'critical' => 'fatal',
+            'alert' => 'fatal',
+            'emergency' => 'fatal',
+            'notice' => 'info',
+            'debug' => 'info' // TEMPORARY MAP TO TEST IF 'debug' IS THE CAUSE
+        ];
+        $vtLevel = $levelMap[strtolower($level)] ?? strtolower($level);
 
-        // Sanitize context fields from top level
-        unset($log['service'], $log['environment']);
-        $log['service'] = $context['service'] ?? $this->config->service;
-        $log['environment'] = $this->config->environment;
+        $metadata = array_merge($this->defaultMetadata, $context);
+        $metadata = $this->redactor->redact($metadata);
+        
+        // Extract standard reserved keys from metadata if they exist
+        $service = $metadata['service'] ?? $this->config->service;
+        $environment = $metadata['environment'] ?? $this->config->environment;
 
-        return $this->redactor->redact($log);
+        // Remove them so they don't duplicate inside the metadata object
+        unset($metadata['service'], $metadata['environment']);
+
+        $log = [
+            'level' => $vtLevel,
+            'message' => $this->interpolate($message, $metadata), // Use redacted metadata for interpolation
+            'timestamp' => date('c'),
+            'service' => $service,
+            'environment' => $environment,
+            'metadata' => $metadata
+        ];
+
+        return $log;
     }
 
     private function interpolate(string $message, array $context): string

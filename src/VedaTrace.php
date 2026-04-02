@@ -17,11 +17,16 @@ class VedaTrace
         $transports = $options['transports'] ?? [];
 
         if (empty($transports)) {
+            $transportOptions = array_merge($options, [
+                'apiKey' => $config->apiKey,
+                'endpoint' => $config->endpoint
+            ]);
+
             if (!empty($config->apiKey)) {
-                $transports[] = new HttpTransport($options);
+                $transports[] = new HttpTransport($transportOptions);
             } else {
                 // If no apiKey and no transports, default to console for visibility
-                $transports[] = new ConsoleTransport($options);
+                $transports[] = new ConsoleTransport($transportOptions);
             }
         }
 
