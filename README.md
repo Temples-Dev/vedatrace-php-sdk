@@ -107,4 +107,4 @@ The VedaTrace PHP SDK is open-sourced software licensed under the [MIT license](
 
 ---
 
-© 2024 VedaTrace Team. All rights reserved.
+© 2026 VedaTrace Team. All rights reserved.
