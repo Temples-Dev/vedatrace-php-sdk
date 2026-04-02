@@ -82,10 +82,10 @@ Add VedaTrace to your `config/logging.php` to use it as a standard channel:
 | Option | Env Variable | Default | Description |
 |---|---|---|---|
 | `apiKey` | `VEDATRACE_API_KEY` | `''` | Your VedaTrace API Key |
-| `service` | `VEDATRACE_SERVICE` | `'php-app'` | Logical service name |
-| `transport` | `VEDATRACE_TRANSPORT` | `'http'` | `http` or `console` |
-| `batchSize` | `VEDATRACE_BATCH_SIZE` | `5` | Logs per batch |
-| `redactPaths` | `VEDATRACE_REDACT_PATHS`| `['password']` | Fields to mask |
+| `service` | `VEDATRACE_SERVICE` | `'default-php-service'` | Logical service name |
+| `batchSize` | `VEDATRACE_BATCH_SIZE` | `100` | Logs per batch |
+| `flushInterval` | `VEDATRACE_FLUSH_INTERVAL` | `5000` | Flush interval (ms) |
+| `redaction` | N/A | `paths, mask` | Fields to mask |
 
 ---
 

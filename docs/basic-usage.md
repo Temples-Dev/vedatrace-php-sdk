@@ -40,11 +40,20 @@ $logger->fatal('Fatal error message');
 
 ## Context Data
 
-You can pass an optional associative array as context for any log message:
+You can pass an optional associative array as context for any log message. This data will be automatically nested under a `metadata` field in VedaTrace:
 
 ```php
 $logger->info('User login successful', [
     'user_id' => 123,
     'ip_address' => '127.0.0.1'
 ]);
+```
+
+## Disposing the Logger
+
+VedaTrace batches logs to optimize performance. In long-running processes (like Laravel), the SDK handles flushing automatically. However, in **standalone CLI scripts**, you must call `dispose()` to ensure all buffered logs are sent before the script exits:
+
+```php
+$logger->info('Script finished');
+$logger->dispose(); // Flush and close
 ```

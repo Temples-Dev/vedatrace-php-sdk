@@ -4,11 +4,28 @@ VedaTrace provides "plug-and-play" support for the Laravel framework through a d
 
 ## Laravel Integration
 
-The SDK's Laravel components are provided out-of-the-box:
+The SDK's Laravel components are provided out-of-the-box and support Laravel 10, 11, and 12+.
 
-### Service Provider
+### 1. Installation
 
-To register VedaTrace in Laravel, add the `VedaTraceServiceProvider` to your `config/app.php` providers if not automatically discovered:
+Ensure the package is installed via Composer (if not already):
+
+```bash
+composer require vedatrace/vedatrace-php
+```
+
+### 2. Service Provider Registration
+
+For **Laravel 11 and 12+**, add the provider to `bootstrap/providers.php`:
+
+```php
+return [
+    App\Providers\AppServiceProvider::class,
+    VedaTrace\Laravel\VedaTraceServiceProvider::class, // Add this
+];
+```
+
+For **Laravel 10**, add it to the `providers` array in `config/app.php`:
 
 ```php
 'providers' => [
@@ -17,29 +34,19 @@ To register VedaTrace in Laravel, add the `VedaTraceServiceProvider` to your `co
 ],
 ```
 
-### Facade
+### 3. Environment Configuration
 
-The `VedaTrace` facade is available for static access in any Laravel class:
+Add your VedaTrace API key and service name to your `.env` file:
 
-```php
-use VedaTrace\Laravel\Facades\VedaTrace;
-
-VedaTrace::info('Logged via Facade!');
+```env
+VEDATRACE_API_KEY=your_api_key_here
+VEDATRACE_SERVICE=my-laravel-app
+LOG_CHANNEL=vedatrace
 ```
 
-### Configuration
+### 4. Logging Configuration
 
-Publish the default configuration file to your project:
-
-```bash
-php artisan vendor:publish --tag=vedatrace-config
-```
-
-Custom configurations can be set in `config/vedatrace.php`.
-
-## Monolog Handler
-
-VedaTrace also provides a custom Monolog handler (`VedaTraceHandler`). You can register it in your `config/logging.php` to include VedaTrace in your app's standard logging stack:
+Add the `vedatrace` channel to your `config/logging.php` file:
 
 ```php
 'channels' => [
@@ -52,4 +59,36 @@ VedaTrace also provides a custom Monolog handler (`VedaTraceHandler`). You can r
 ],
 ```
 
-Logging to the `vedatrace` channel will automatically send logs to the VedaTrace API through the SDK's internal logging logic.
+### 5. Usage
+
+Once configured, you can use the standard Laravel `Log` facade:
+
+```php
+use Illuminate\Support\Facades\Log;
+
+Log::info('User login attempt', ['user_id' => 456]);
+```
+
+Or use the `VedaTrace` facade directly for more control:
+
+```php
+use VedaTrace\Laravel\Facades\VedaTrace;
+
+VedaTrace::error('Database connection failed', [
+    'host' => 'db.internal',
+    'retry_attempt' => 3
+]);
+```
+
+### 6. Redaction
+
+VedaTrace automatically redacts sensitive information. By default, keys like `password`, `token`, and `secret` are masked. You can customize this by publishing the config:
+
+```bash
+php artisan vendor:publish --tag=vedatrace-config
+```
+
+Then edit `config/vedatrace.php`.
+
+> [!TIP]
+> All contextual data passed to log methods (e.g., `['user_id' => 123]`) is automatically nested under a `metadata` object in the VedaTrace dashboard to keep your logs structured and easy to search.
