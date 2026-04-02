@@ -11,11 +11,13 @@ use function VedaTrace\vedatrace;
  * Make sure to run `composer install` in this directory first.
  */
 
-// 1. Initialize the logger with your API Key
+// 0. Load environment variables from .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+// 1. Initialize the logger.
+// It will automatically pick up VEDATRACE_API_KEY and VEDATRACE_SERVICE from the environment!
 $logger = vedatrace([
-    'apiKey' => 'your-api-key',
-    'service' => 'standalone-php-example',
-    'transport' => 'console', // Defaults to 'http' for production
     'prettyPrint' => true     // Great for local development visibility
 ]);
 
